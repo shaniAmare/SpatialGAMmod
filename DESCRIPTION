@@ -1,0 +1,11 @@
+Package: spatialGAMmod
+Type: Package
+Title: Spatial GAM Gradient Analysis
+Version: 0.1.0
+Authors@R: person("Your", "Name", email = "your@email.com", role = c("aut", "cre"))
+Description: Analyze spatial expression gradients using Generalized Additive Models (GAMs) in spatial transcriptomics.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 4.0.0)
+Imports: Seurat, mgcv, FNN, dplyr, ggplot2, patchwork, viridis, RColorBrewer, Matrix
