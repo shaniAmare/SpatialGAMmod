@@ -112,6 +112,14 @@ seurat_obj <- run_pseudotime_within_region(
 )
 ```
 
+### Complete User Manual 
+
+```markdown
+## User Manual
+
+For a detailed user manual and workflow guide, see the [User Manual](vignettes/user_manual.md).
+```
+
 ### Package Functions Overview
 ```css
 - aggregate_expression_per_region()
@@ -142,6 +150,7 @@ seurat_obj <- run_pseudotime_within_region(
 - spatial_gam_gradient()
 - tumour_vs_non_tumour_contour()
 ```
+---
 
 ### Citation
 Please cite this package if used in published research.

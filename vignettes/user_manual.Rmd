@@ -1,0 +1,52 @@
+---
+title: "SpatialGAMmod User Manual and Workflow"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    theme: united
+    highlight: tango
+---
+
+# SpatialGAMmod: User Manual and Workflow
+
+This document provides a step-by-step workflow to analyze spatial transcriptomics data using the **SpatialGAMmod** package. It guides you through key functions for assigning spatial regions, modeling spatial gene expression gradients with GAMs, computing cell type proportions, comparing tumor vs non-tumor regions, and visualizing results.
+
+---
+
+## Prerequisites
+
+- A Seurat object with spatial transcriptomics data, including:
+  - Expression data (e.g., assay `"RNA"`, slot `"data"`)
+  - Spatial coordinates in metadata columns (default: `"imagecol"` and `"imagerow"`)
+  - Cell type annotations in metadata (e.g., `"CellType"`)
+  
+- The SpatialGAMmod package installed (see README for installation).
+
+- Required R packages: `Seurat`, `mgcv`, `ggplot2`, `viridis`, `dplyr`, `tidyr`, `pheatmap`.
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Assign Cells to Spatial Contour Regions
+Use spatial coordinates or clustering to assign cells into spatial regions (contours) that represent biologically meaningful zones such as tumor core, invasive front, stroma, etc.
+
+```{r}
+library(SpatialGAMmod)
+
+# Assuming seurat_obj is pre-loaded
+seurat_obj <- assign_contour_regions(
+  seurat_obj,
+  coord_cols = c("imagecol", "imagerow"),
+  num_contours = 5,
+  method = "kmeans"
+)
+
+# This adds a metadata column (default name "assigned_region") to seurat_obj
+head(seurat_obj@meta.data$assigned_region)
+```
+
+
