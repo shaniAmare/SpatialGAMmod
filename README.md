@@ -112,13 +112,9 @@ seurat_obj <- run_pseudotime_within_region(
 )
 ```
 
-### Complete User Manual 
+### Complete User Manual
 
-```markdown
-## User Manual
-
-For a detailed user manual and workflow guide, see the [User Manual](vignettes/user_manual.md).
-```
+For a detailed user manual and workflow guide, see the [User Manual](vignettes/user_manual.Rmd).
 
 ### Package Functions Overview
 ```css
