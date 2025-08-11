@@ -1,12 +1,16 @@
 ---
 title: "SpatialGAMmod User Manual and Workflow"
+author: "Your Name"
+date: "`r Sys.Date()`"
 output:
-  html_document:
+  rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
     number_sections: true
-    theme: united
-    highlight: tango
+vignette: >
+  %\VignetteIndexEntry{SpatialGAMmod User Manual and Workflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 # SpatialGAMmod: User Manual and Workflow
@@ -28,10 +32,10 @@ This document provides a step-by-step workflow to analyze spatial transcriptomic
 
 ```{r setup, include=FALSE}
 library(knitr)
-opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, eval = FALSE, results = FALSE)
 ```
 
-# Assign Cells to Spatial Contour Regions
+## Assign Cells to Spatial Contour Regions
 Use spatial coordinates or clustering to assign cells into spatial regions (contours) that represent biologically meaningful zones such as tumor core, invasive front, stroma, etc.
 
 ```{r}
@@ -49,4 +53,141 @@ seurat_obj <- assign_contour_regions(
 head(seurat_obj@meta.data$assigned_region)
 ```
 
+## Calculate Cell Type Proportions per Region
+Compute the proportions of each cell type within each spatial region.
 
+
+```{r}
+prop_df <- calculate_celltype_proportions(
+  seurat_obj,
+  region_col = "assigned_region",
+  celltype_col = "CellType"
+)
+
+head(prop_df)
+```
+
+## Visualize Cell Type Proportions as Heatmaps
+Visualize these proportions across regions using heatmaps.
+
+```{r}
+proportion_heatmaps(
+  prop_df,
+  region_col = "assigned_region",
+  celltype_col = "CellType",
+  proportion_col = "proportion",
+  cluster_rows = TRUE,
+  cluster_cols = TRUE,
+  scale = FALSE
+)
+```
+
+## Fit Spatial GAM Gradients for Genes or Signatures
+Model spatial gradients of gene expression or gene signatures using Generalized Additive Models (GAMs). This step smooths expression over spatial coordinates and optionally fits separate models per group (e.g., tumor cores).
+```{r}
+genes_to_model <- c("ACTA2", "COL1A1")
+signature_list <- list(
+  my_signature = c("ACTA2", "COL1A1", "FAP")
+)
+
+gam_res <- spatial_gam_gradient(
+  seurat_obj,
+  genes = genes_to_model,
+  signature_list = signature_list,
+  split_by = "tumor_core_location",  # optional grouping
+  spatial_coords = c("imagecol", "imagerow"),
+  plot_results = TRUE
+)
+
+# View GAM fit summaries
+print(gam_res$metadata)
+
+# Plot smoothed spatial expression gradients (example for first plot)
+print(gam_res$plots[[1]])
+```
+
+## Predict GAM Expression on a Spatial Grid
+Generate smooth spatial predictions for visualization or further analysis:
+
+```{r}
+# Choose a GAM model from the list returned by spatial_gam_gradient()
+gam_model <- gam_res$gam_fits[[1]]
+
+# Predict expression on a spatial grid
+grid_pred <- predict_gam_to_grid(
+  gam_model,
+  seurat_obj@meta.data,
+  coord_cols = c("imagecol", "imagerow"),
+  grid_length = 100
+)
+
+# Visualize grid predictions
+library(ggplot2)
+ggplot(grid_pred, aes(x = imagecol, y = imagerow, fill = predicted)) +
+  geom_raster() +
+  scale_fill_viridis_c() +
+  coord_fixed() +
+  labs(title = "Predicted Spatial Expression") +
+  theme_minimal()
+```
+
+## Compare Tumour vs Non-Tumour Regions
+Perform differential expression analysis between tumor and non-tumor regions defined by contour assignments.
+
+```{r}
+diff_res <- tumour_vs_non_tumour_contour(
+  seurat_obj,
+  contour_col = "assigned_region",
+  tumour_regions = c("tumour_core"),
+  non_tumour_regions = c("stroma", "immune"),
+  genes = genes_to_model,
+  plot_results = TRUE
+)
+
+# Inspect results
+head(diff_res$results)
+
+# Plot volcano plot
+print(diff_res$plot)
+```
+
+## Additional Analyses
+
+### Spatial Autocorrelation (Moran’s I)
+
+```{r}
+moran_i <- spatial_autocorrelation(
+  seurat_obj,
+  gene = "ACTA2",
+  coord_cols = c("imagecol", "imagerow"),
+  neighbors_k = 6
+)
+print(moran_i)
+```
+
+### Spatial Correlation Decay with Distance
+
+```{r}
+dist_corr <- spatial_correlation_with_distance(
+  seurat_obj,
+  gene = "ACTA2",
+  coord_cols = c("imagecol", "imagerow"),
+  n_bins = 20,
+  sample_size = 10000
+)
+plot(dist_corr$mean_distance, dist_corr$mean_correlation, type = "b",
+     xlab = "Distance", ylab = "Expression similarity",
+     main = "Spatial correlation decay with distance")
+```
+
+### Run Pseudotime Within Regions
+
+```{r}
+seurat_obj <- run_pseudotime_within_region(
+  seurat_obj,
+  region_col = "assigned_region",
+  reduction = "pca",
+  dims = 1:10,
+  cluster_col = "CellType"
+)
+```
