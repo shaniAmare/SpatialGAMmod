@@ -1,8 +1,11 @@
 # SpatialGAMmod
 
+
 **SpatialGAMmod** is an R package designed for spatial transcriptomics data analysis. It provides tools to model spatial gene expression gradients using Generalized Additive Models (GAMs), perform spatial autocorrelation analyses, compare tumor vs non-tumor regions, analyze cell type proportions, and visualize spatial patterns effectively.
 
-*This is only a side project of mine, so I might be slow to respond to any issues.*
+*NOTE: This is only a side project of mine, so I might be slow to respond to any issues.*
+
+
 ---
 
 ## Features
@@ -110,34 +113,35 @@ seurat_obj <- run_pseudotime_within_region(
 ```
 
 ### Package Functions Overview
-aggregate_expression_per_region()
-assign_contour_regions()
-calculate_celltype_proportions()
-celltype_distribution_plots()
-celltype_enrichment_analysis()
-compare_expression_across_contours()
-compute_diversity_index()
-compute_entropy_per_region()
-contour_variability_by_group()
-enrichment_in_contours()
-export_cells_by_region()
-fit_spatial_gam()
-gene_signature_by_contour()
-localised_interactions_summary()
-map_contour_to_cells()
-marker_density_maps()
-plot_celltype_barplot()
-plot_celltype_heatmap()
-plot_expression_density_per_region()
-plot_gam_contours()
-predict_gam_to_grid()
-proportion_heatmaps()
-run_pseudotime_within_region()
-spatial_autocorrelation()
-spatial_correlation_with_distance()
-spatial_gam_gradient()
-tumour_vs_non_tumour_contour()
-
+```css
+- aggregate_expression_per_region()
+- assign_contour_regions()
+- calculate_celltype_proportions()
+- celltype_distribution_plots()
+- celltype_enrichment_analysis()
+- compare_expression_across_contours()
+- compute_diversity_index()
+- compute_entropy_per_region()
+- contour_variability_by_group()
+- enrichment_in_contours()
+- export_cells_by_region()
+- fit_spatial_gam()
+- gene_signature_by_contour()
+- localised_interactions_summary()
+- map_contour_to_cells()
+- marker_density_maps()
+- plot_celltype_barplot()
+- plot_celltype_heatmap()
+- plot_expression_density_per_region()
+- plot_gam_contours()
+- predict_gam_to_grid()
+- proportion_heatmaps()
+- run_pseudotime_within_region()
+- spatial_autocorrelation()
+- spatial_correlation_with_distance()
+- spatial_gam_gradient()
+- tumour_vs_non_tumour_contour()
+```
 
 ### Citation
 Please cite this package if used in published research.
@@ -145,4 +149,4 @@ Please cite this package if used in published research.
 ### Contact
 For issues, feature requests, or questions, please open an issue on GitHub or contact shani.amarasinghe@monash.edu.
 
-Happy spatial analysis!
+*Happy spatial analysis!*
